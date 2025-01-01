@@ -1,0 +1,412 @@
+LeetCode:
+1)
+https://leetcode.com/problems/find-the-duplicate-number/submissions/1493473714/
+class Solution {
+public:
+    int findDuplicate(vector<int>& nums) {
+        
+        int slow = nums[0];
+        int fast = nums[0];
+        
+        do {
+            slow = nums[slow]; 
+            fast = nums[nums[fast]]; 
+        } while (slow != fast);
+
+       
+        slow = nums[0];
+        while (slow != fast) {
+            slow = nums[slow]; 
+            fast = nums[fast];
+        }
+
+        return slow;
+    }
+};
+2)https://leetcode.com/problems/excel-sheet-column-number/submissions/1493422245/
+class Solution {
+public:
+    int titleToNumber(string columnTitle) {
+        int result = 0;
+        for (char c : columnTitle) {
+            int value = c - 'A' + 1; 
+            result = result * 26 + value; 
+        }
+        return result;
+    }
+};
+
+3)https://leetcode.com/problems/excel-sheet-column-title/submissions/1493429539/
+class Solution {
+public:
+    string convertToTitle(int columnNumber) {
+        string result = "";
+
+        while (columnNumber > 0) {
+            int remainder = (columnNumber - 1) % 26; 
+            result += ('A' + remainder);            
+            columnNumber = (columnNumber - 1) / 26; 
+        }
+
+        reverse(result.begin(), result.end());     
+        return result;
+    }
+};
+4)https://leetcode.com/problems/palindrome-number/submissions/1493433222/
+class Solution {
+public:
+    bool isPalindrome(int x) {
+        if (x < 0) {
+            return false; // Negative numbers are not palindromes
+        }
+
+        int original = x;
+        int reverse = 0;
+
+        while (x > 0) {
+            int digit = x % 10;
+
+            
+            if (reverse > (INT_MAX - digit) / 10) {
+                return false; 
+            }
+
+            reverse = reverse * 10 + digit;
+            x /= 10;
+        }
+
+        return original == reverse;
+    }
+};
+
+INTERVIEWBIT:
+
+1)https://www.interviewbit.com/problems/first-missing-integer/
+int firstMissingPositive(vector<int>& nums) {
+        int n = nums.size();
+        if (n == 0) return 1;
+
+       
+        for (int i = 0; i < n; i++) {
+            if (nums[i] <= 0 || nums[i] > n) {
+                nums[i] = n + 1;
+            }
+        }
+
+        
+        for (int i = 0; i < n; i++) {
+            int num = abs(nums[i]);
+            if (num <= n && nums[num - 1] > 0) {
+                nums[num - 1] = -nums[num - 1];
+            }
+        }
+
+        // Step 3: Find first positive number
+        for (int i = 0; i < n; i++) {
+            if (nums[i] > 0) {
+                return i + 1;
+            }
+        }
+
+        return n + 1;
+    }
+
+2)https://www.interviewbit.com/problems/repeat-and-missing-number-array/
+vector<int> Solution::repeatedNumber(const vector<int> &A) {
+    long long n = A.size();
+    
+    
+    long long S1 = (n * (n + 1)) / 2;
+    long long S2 = (n * (n + 1) * (2 * n + 1)) / 6;
+    
+    
+    long long aS1 = 0; 
+    long long aS2 = 0;  
+    
+    for(int i = 0; i < n; i++) {
+        aS1 += (long long)A[i];
+        aS2 += (long long)A[i] * (long long)A[i];
+    }
+    
+    
+    long long d1 = aS1 - S1;    
+    long long d2 = aS2 - S2;    
+    
+    
+    long long sum = d2/d1;      
+    
+    
+    long long X = (sum + d1)/2;    
+    long long Y = X - d1;
+    
+    return {(int)X, (int)Y};
+}
+
+3)https://www.interviewbit.com/problems/n3-repeat-number/
+int Solution::repeatedNumber(const vector<int> &A) {
+    int size = A.size();
+    int num1 = 0, num2 = 0;
+    int count1 = 0, count2 = 0;
+    
+    for(int i = 0; i < size; i++) {
+        if(num1 == A[i]) {
+            count1++;
+        }
+        else if(num2 == A[i]) {
+            count2++;
+        }
+        else if(count1 == 0) {
+            num1 = A[i];
+            count1 = 1;
+        }
+        else if(count2 == 0) {
+            num2 = A[i];
+            count2 = 1;
+        }
+        else {
+            count1--;
+            count2--;
+        }
+    }
+    
+    count1 = 0;
+    count2 = 0;
+    
+    for(int i = 0; i < size; i++) {
+        if(A[i] == num1) count1++;
+        else if(A[i] == num2) count2++;
+    }
+    
+    if(count1 > size/3) return num1;
+    if(count2 > size/3) return num2;
+    
+    return -1;
+}
+
+GEEKSFORGEEKS:
+
+1)https://www.geeksforgeeks.org/union-and-intersection-of-two-sorted-arrays-2/
+class Solution {
+public:
+    vector<int> findIntersection(vector<int>& a, vector<int>& b) {
+        int i = 0, j = 0;
+        vector<int> result;
+        sort(a.begin(), a.end());
+        sort(b.begin(), b.end());
+        
+        while (i < a.size() && j < b.size()) {
+            if (a[i] == b[j]) {
+                result.push_back(a[i]);
+                i++;
+                j++;
+            }
+            else if (a[i] < b[j]) {
+                i++;
+            }
+            else {
+                j++;
+            }
+        }
+        
+        return result;
+    }
+};
+2)https://www.geeksforgeeks.org/find-the-number-occurring-odd-number-of-times/
+class Solution {
+public:
+    int findOddOccurrence(vector<int>& arr) {
+        int result = 0;
+        for(int num : arr) {
+            result ^= num;
+        }
+        return result;
+    }
+};
+
+3)https://www.geeksforgeeks.org/find-the-missing-number/
+int missingNumber(vector<int> &arr) {
+
+    int n = arr.size() + 1;
+
+    
+    vector<int> count(n + 1, 0);
+    for (int i = 0; i < n - 1; i++) {
+        count[arr[i]]++;
+    }
+    for (int i = 1; i <= n; i++) {
+        if (count[i] == 0) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+4)https://www.geeksforgeeks.org/find-two-non-repeating-elements-in-an-array-of-repeating-elements/
+vector<int> findUnique(int arr[], int n)
+{
+    sort(arr, arr + n);
+    vector<int> res;
+    
+    for (int i = 0; i < n - 1; i = i + 2) {
+        if (arr[i] != arr[i + 1]) {
+            res.push_back(arr[i]);
+            if(res.size() == 2)
+                return res;
+            i = i - 1;
+        }
+    }
+   
+    res.push_back(arr[n - 1]);
+    return res;
+}
+
+5)https://www.geeksforgeeks.org/find-the-two-numbers-with-odd-occurences-in-an-unsorted-array/
+vector<int> findOddOccurrences(vector<int>& arr) {
+    int xorSum = 0;
+    for(int num : arr) {
+        xorSum ^= num;
+    }
+    
+    int rightSetBit = xorSum & -xorSum;
+    
+    int x = 0, y = 0;
+    for(int num : arr) {
+        if(num & rightSetBit) {
+            x ^= num;
+        } else {
+            y ^= num;
+        }
+    }
+    
+    return {min(x, y), max(x, y)};
+}
+
+6)
+void reverseArray(vector<int> &arr) {
+    int n = arr.size();
+    
+    vector<int> reverse(n);
+  
+    for(int i = 0; i < n; i++)
+        reverse[i] = arr[n - i - 1];
+  
+    for(int i = 0; i < n; i++)
+        arr[i] = reverse[i];
+}
+
+7)https://www.geeksforgeeks.org/maximum-and-minimum-in-an-array/
+int min(int A[], int n)
+{
+    int min=INT_MAX;
+    for (int i = 0; i <n; i++) {
+        if (A[i]<min) {
+            min=A[i];
+        }
+    }
+    return min;
+}
+int max(int A[], int n)
+{
+    int max=INT_MIN;
+
+    for (int i = 0; i < n; i++) {
+        if (A[i]>max) {
+            max= A[i];
+        }
+    }
+    return max;
+}
+
+8)https://www.geeksforgeeks.org/segregate-even-and-odd-numbers/
+void segregateEO(vector<int> &arr) {
+    int i = 0, j = arr.size() - 1;
+
+    while (i < j) {
+        while (arr[i] % 2 == 0 && i < j) i++; 
+        while (arr[j] % 2 == 1 && i < j) j--; 
+
+        if (i < j) {
+            swap(arr[i], arr[j]);
+            i++;
+            j--;
+        }
+    }
+}
+
+9)https://www.geeksforgeeks.org/rearrange-positive-and-negative-numbers-publish/
+void rearrange(int arr[], int n) {
+    vector<int> pos, neg;
+    for (int i = 0; i < n; ++i) {
+        if (arr[i] >= 0)
+            pos.push_back(arr[i]);
+        else
+            neg.push_back(arr[i]);
+    }
+
+    int p = 0, q = 0, k = 0;
+    bool isPosTurn = true;
+    while (p < pos.size() && q < neg.size()) {
+        if (isPosTurn)
+            arr[k++] = pos[p++];
+        else
+            arr[k++] = neg[q++];
+        isPosTurn = !isPosTurn;
+    }
+    while (p < pos.size())
+        arr[k++] = pos[p++];
+    while (q < neg.size())
+        arr[k++] = neg[q++];
+}
+10)https://www.geeksforgeeks.org/move-zeroes-end-array/
+void zeroestoend(vector <int> &arr){
+    int n=arr.size();
+    vector <int>temp(n);
+    int j=0;
+    for(int i=0;i<n;i++){
+        if(arr[i]!=0){
+            temp[j++]=arr[i];
+        }
+    }
+    while(j<n){
+        temp[j++]=0;
+    }
+    for(int i=0;i<n;i++){
+        arr[i]=temp[i];
+    }
+}
+
+11)
+void sorting012(vector <int> &arr){
+    int n=arr.size()
+    int x=0;
+    int y=0;
+    int z=0;
+    for(int i=0;i<n;i++){
+        if(arr[i]==0){
+            x++;
+        }
+        else if(arr[i]==1){
+            y++;
+        }
+        else{
+            z++;
+        }
+    }
+    int p=0
+    for(int i=0;i<x;i++){
+        arr[p++]=0;
+
+    }
+    for(int i=0;i<y;i++){
+        arr[p++]=1;
+
+    }
+    for(int i=0;i<z;i++){
+        arr[p++]=2;
+
+    }
+
+
+}
+CODEFORCES:
+
