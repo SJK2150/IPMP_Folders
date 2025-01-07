@@ -1,0 +1,410 @@
+Leetcode:
+1)
+class Solution {
+public:
+    int maxAscendingSum(vector<int>& nums) {
+        int maxsum = 0;
+        int currentsum = nums[0]; 
+
+        for (int i = 1; i < nums.size(); i++) {
+            if (nums[i] > nums[i - 1]) {
+                currentsum += nums[i];
+            } else {
+                maxsum = max(maxsum, currentsum); 
+                currentsum = nums[i]; 
+            }
+        }
+
+        maxsum = max(maxsum, currentsum); 
+        return maxsum;
+    }
+};
+2)
+class Solution {
+public:
+    int numberOfSubarrays(vector<int>& nums, int k) {
+        return countAtMostK(nums, k) - countAtMostK(nums, k - 1);
+    }
+        int countAtMostK(vector<int>& nums, int k) {
+        int left = 0, count = 0, oddCount = 0;
+        
+        for (int right = 0; right < nums.size(); ++right) {
+            if (nums[right] % 2 != 0) {
+                oddCount++;
+            }
+            
+            while (oddCount > k) {
+                if (nums[left] % 2 != 0) {
+                    oddCount--;
+                }
+                left++;
+            }
+            
+            count += right - left + 1;
+        }
+        
+        return count;
+    }
+};
+3)
+class Solution {
+public:
+    int numSubarrayProductLessThanK(vector<int>& nums, int k) {
+        if (k <= 1) return 0;  
+        
+        int left = 0;
+        int product = 1;
+        int count = 0;
+
+        for (int right = 0; right < nums.size(); right++) {
+            product *= nums[right];
+            
+            while (product >= k && left <= right) {
+                product /= nums[left];
+                left++;
+            }
+            
+            count += right - left + 1;  
+        }
+        
+        return count;
+    }
+};
+4)
+class Solution {
+public:
+    int atMostK(vector<int>& nums, int k) {
+    unordered_map<int, int> freq;
+    int left = 0, count = 0;
+
+    for (int right = 0; right < nums.size(); right++) {
+        freq[nums[right]]++;
+        while (freq.size() > k) {
+            freq[nums[left]]--;
+            if (freq[nums[left]] == 0) {
+                freq.erase(nums[left]);
+            }
+            left++;
+        }
+        count += (right - left + 1);
+    }
+    return count;
+}
+
+int subarraysWithKDistinct(vector<int>& nums, int k) {
+    return atMostK(nums, k) - atMostK(nums, k - 1);
+}
+};
+5)
+class Solution {
+public:
+    int trap(vector<int>& height) {
+            if (height.empty()) return 0;
+
+    int left = 0, right = height.size() - 1;
+    int left_max = 0, right_max = 0;
+    int water_trapped = 0;
+
+    while (left <= right) {
+        if (height[left] <= height[right]) {
+            if (height[left] >= left_max) {
+                left_max = height[left];
+            } else {
+                water_trapped += left_max - height[left];
+            }
+            left++;
+        } else {
+            if (height[right] >= right_max) {
+                right_max = height[right];
+            } else {
+                water_trapped += right_max - height[right];
+            }
+            right--;
+        }
+    }
+
+    return water_trapped;
+        
+    }
+};
+6)
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+        int minPrice = INT_MAX;  
+        int maxProfit = 0;       
+
+        for (int price : prices) {
+            if (price < minPrice) {
+                minPrice = price;  
+            } else {
+                maxProfit = max(maxProfit, price - minPrice);  
+            }
+        }
+
+        return maxProfit;
+    }
+};
+7)
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+        int maxProfit = 0;
+
+        for (int i = 1; i < prices.size(); ++i) {
+            if (prices[i] > prices[i - 1]) {
+                maxProfit += prices[i] - prices[i - 1];
+            }
+        }
+
+        return maxProfit;
+    }
+};
+8)
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+        int buy1 = INT_MAX, buy2 = INT_MAX;
+        int profit1 = 0, profit2 = 0;
+
+        for (int price : prices) {
+            buy1 = min(buy1, price);
+            profit1 = max(profit1, price - buy1);
+
+            buy2 = min(buy2, price - profit1);
+            profit2 = max(profit2, price - buy2);
+        }
+        
+        return profit2;
+    }
+};
+
+9)
+class Solution {
+public:
+    int maxProfit(int k, vector<int>& prices) {
+        if (prices.empty() || k == 0) return 0;
+        int n = prices.size();
+        if (k >= n / 2) {
+            int profit = 0;
+            for (int i = 1; i < n; ++i) {
+                if (prices[i] > prices[i - 1]) {
+                    profit += prices[i] - prices[i - 1];
+                }
+            }
+            return profit;
+        }
+        vector<vector<int>> dp(k + 1, vector<int>(n, 0));
+        for (int i = 1; i <= k; ++i) {
+            int maxDiff = -prices[0];
+            for (int j = 1; j < n; ++j) {
+                dp[i][j] = max(dp[i][j-1], prices[j] + maxDiff);
+                maxDiff = max(maxDiff, dp[i-1][j] - prices[j]);
+            }
+        }
+        
+        return dp[k][n-1];
+    }
+};
+10)
+class Solution {
+public:
+    vector<vector<int>> fourSum(vector<int>& nums, int target) {
+        vector<vector <int>> result;
+        int n=nums.size();
+        if(n<4) return result;
+
+        sort(nums.begin(),nums.end());
+        for(int i=0;i<n-3;i++){
+            if(i>0 && nums[i]==nums[i-1]) continue;
+            for(int j=i+1;j<n-2;j++){
+                if(j>i+1 && nums[j]==nums[j-1]) continue;
+                if (j > i + 1 && nums[j] == nums[j - 1]) continue;
+                
+                int left = j + 1;
+                int right = n - 1;
+                
+                while (left < right) {
+                    long long sum = (long long)nums[i] + (long long)nums[j] + (long long)nums[left] + (long long)nums[right];
+                    
+                    if (sum == target) {
+                        result.push_back({nums[i], nums[j], nums[left], nums[right]});
+                        
+                        while (left < right && nums[left] == nums[left + 1]) ++left;
+                        while (left < right && nums[right] == nums[right - 1]) --right;
+                        
+                        ++left;
+                        --right;
+                    } 
+                    else if (sum < target) {
+                        ++left;
+                    } else {
+                        --right;
+                    }
+                }
+            }
+        }
+        return result;
+    }
+};
+
+
+
+
+
+
+
+
+
+
+GeeksForGeeks
+1) https://www.geeksforgeeks.org/given-an-array-a-and-a-number-x-check-for-pair-in-a-with-sum-as-x/
+bool twoSum(vector<int> &arr, int target) {
+    int num = arr.size();
+    for (int i = 0; i < num; i++) {
+        for (int j = i + 1; j < num; j++) {
+            if (arr[i] + arr[j] == target) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+2) https://www.geeksforgeeks.org/find-a-triplet-that-sum-to-a-given-value/
+bool hasTripletSum(vector<int>& arr, int target) {
+    int num= arr.size();
+
+    for (int i = 0; i < num - 2; i++) {
+        for (int j = i + 1; j < num - 1; j++) {
+            for (int k = j + 1; k < num; k++) { 
+                if (arr[i] + arr[j] + arr[k] == target)
+                    return true; 
+            } 
+        } 
+    } 
+
+    return false; 
+} 
+3) https://www.geeksforgeeks.org/find-a-sorted-subsequence-of-size-3-in-linear-time/
+void findSortedSubsequence(vector<int>& arr) {
+    int n = arr.size();
+    if (n < 3) {
+        cout << "No such triplet exists" << endl;
+        return;
+    }
+
+    vector<int> smaller(n, -1); 
+    vector<int> greater(n, -1);
+
+    int min_index = 0;
+    for (int i = 1; i < n; ++i) {
+        if (arr[i] <= arr[min_index])
+            min_index = i;
+        else
+            smaller[i] = min_index;
+    }
+
+    int max_index = n - 1;
+    for (int i = n - 2; i >= 0; --i) {
+        if (arr[i] >= arr[max_index])
+            max_index = i;
+        else
+            greater[i] = max_index;
+    }
+
+    for (int i = 0; i < n; ++i) {
+        if (smaller[i] != -1 && greater[i] != -1) {
+            cout << "Triplet: " << arr[smaller[i]] << ", " 
+                 << arr[i] << ", " << arr[greater[i]] << endl;
+            return;
+        }
+    }
+
+    cout << "No such triplet exists" << endl;
+}
+4)https://www.geeksforgeeks.org/find-the-row-with-maximum-number-1s/
+int rowWithMaxOnes(vector<vector<int>>& matrix) {
+    int maxRowIndex = -1;
+    int maxOnes = 0;
+    int rows = matrix.size();
+    int cols = matrix[0].size();
+
+    for (int i = 0; i < rows; ++i) {
+        int count = 0;
+        for (int j = 0; j < cols; ++j) {
+            if (matrix[i][j] == 1)
+                count++;
+        }
+        if (count > maxOnes) {
+            maxOnes = count;
+            maxRowIndex = i;
+        }
+    }
+    return maxRowIndex;
+}
+
+5) https://www.geeksforgeeks.org/two-elements-whose-sum-is-closest-to-zero/
+int minAbsSumPair(vector<int>& arr) {
+ 
+    int closetozero= arr[0] + arr[1];
+    for (int i = 0; i < arr.size() - 1; i++) {
+        for (int j = i + 1; j < arr.size(); j++) {
+            int sum = arr[i] + arr[j];
+            if (abs(sum) < abs(closetozero)) {
+                closetozero= sum;
+            }
+        }
+    }
+    return closetozero;
+}
+
+6)
+
+bool subArrayExists(int arr[], int n)
+{
+    for (int i = 0; i < n; i ++) {
+
+        int sum = arr[i];
+        if (sum == 0)
+            return true;
+        for (int j = i + 1; j < n; j++) {
+            sum += arr[j];
+            if (sum == 0)
+                return true;
+        }
+    }
+    return false;
+}
+
+7)
+int findEquilibriumIndex(vector<int>& arr) {
+    int totalSum = 0;
+    for (int num : arr)
+        totalSum += num;
+
+    int leftSum = 0;
+    for (int i = 0; i < arr.size(); ++i) {
+        if (leftSum == totalSum - leftSum - arr[i])
+            return i + 1;
+        leftSum += arr[i];
+    }
+
+    return -1;
+}
+8)
+vector<int> productExceptSelf(vector<int>& arr) {
+    int n = arr.size();
+
+    vector<int> prod(n, 1);
+
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            if (i != j) {
+                prod[i] *= arr[j];
+            }
+        }
+    }
+
+    return prod;
+}
