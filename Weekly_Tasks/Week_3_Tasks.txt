@@ -1,0 +1,359 @@
+
+
+LEETCODE:
+1)
+class Solution {
+public:
+    ListNode* deleteDuplicates(ListNode* head) {
+    if (head == nullptr) return head; 
+    ListNode* current = head; 
+
+    while (current != nullptr && current->next != nullptr) {
+        if (current->val == current->next->val) {
+            current->next = current->next->next;
+        } else {
+            current = current->next;
+        }
+    }
+    return head;
+}
+
+};
+
+2)
+class Solution {
+public:
+    ListNode* deleteDuplicates(ListNode* head) {
+    if (!head || !head->next) return head;
+    
+    ListNode* dummy = new ListNode(0);
+    dummy->next = head;
+    ListNode* prev = dummy;
+    
+    while (head != nullptr) {
+        if (head->next != nullptr && head->val == head->next->val) {
+            while (head->next != nullptr && head->val == head->next->val) {
+                head = head->next;
+            }
+            prev->next = head->next;
+        } else {
+            prev = prev->next;
+        }
+        head = head->next;
+    }
+    return dummy->next;
+}
+
+};
+
+3)
+class Solution {
+public:
+    void reorderList(ListNode* head) {
+    if (!head || !head->next || !head->next->next) return;
+    ListNode* slow = head;
+    ListNode* fast = head;
+    while (fast && fast->next) {
+        slow = slow->next;
+        fast = fast->next->next;
+    }
+    ListNode* secondHalf = reverseList(slow->next);
+    slow->next = nullptr; 
+    ListNode* firstHalf = head;
+    while (secondHalf) {
+        ListNode* temp1 = firstHalf->next;
+        ListNode* temp2 = secondHalf->next;
+
+        firstHalf->next = secondHalf;
+        secondHalf->next = temp1;
+
+        firstHalf = temp1;
+        secondHalf = temp2;
+    }
+    }
+    ListNode* reverseList(ListNode* head) {
+    ListNode* prev = nullptr;
+    while (head) {
+        ListNode* nextNode = head->next;
+        head->next = prev;
+        prev = head;
+        head = nextNode;
+    }
+    return prev;
+}
+
+};
+
+4)
+class Solution {
+public:
+    ListNode* swapPairs(ListNode* head) {
+        if(!head||!head->next) return head;
+        ListNode* dummy=new ListNode(0);
+        dummy->next=head;
+        ListNode* current=dummy;
+        while(current->next!=NULL && current->next->next!=NULL){
+            ListNode* first=current->next;
+            ListNode* second=current->next->next;
+
+            first->next=second->next;
+            current->next=second;
+            second->next=first;
+
+            current=first;
+        }
+        return dummy->next;
+    }
+};
+
+5)
+class Solution {
+public:
+    ListNode* swapNodes(ListNode* head, int k) {
+        ListNode* length = head;
+        int len = 0;
+
+        while (length) {
+            len++;
+            length = length->next;
+        }
+
+        ListNode* first = head;
+        ListNode* prev1 = nullptr;
+        for (int i = 1; i < k; ++i) {
+            prev1 = first;
+            first = first->next;
+        }
+
+        ListNode* second = head;
+        ListNode* prev2 = nullptr;
+        for (int i = 1; i < len - k + 1; ++i) {
+            prev2 = second;
+            second = second->next;
+        }
+
+        if (first == second) return head;
+
+        if (prev1) prev1->next = second;
+        if (prev2) prev2->next = first;
+
+        ListNode* temp = first->next;
+        first->next = second->next;
+        second->next = temp;
+
+        if (k == 1) return second;
+        if (k == len) return first;
+
+        return head;
+    }
+};
+
+6)
+class Solution {
+public:
+    ListNode* sortList(ListNode* head) {
+        if(!head || !head->next) return head;
+        
+        ListNode* mid = middle(head);
+        ListNode* left = head;
+        ListNode* right = mid->next;
+        mid->next = NULL;
+        
+        left = sortList(left);
+        right = sortList(right);
+        return merge(left, right);
+    }
+    
+    ListNode* merge(ListNode* l1, ListNode* l2) {
+        ListNode dummy(0);
+        ListNode* curr = &dummy;
+        
+        while(l1 && l2) {
+            if(l1->val <= l2->val) {
+                curr->next = l1;
+                l1 = l1->next;
+            } else {
+                curr->next = l2;
+                l2 = l2->next;
+            }
+            curr = curr->next;
+        }
+        
+        if(l1) curr->next = l1;
+        if(l2) curr->next = l2;
+        
+        return dummy.next;
+    }
+    
+    ListNode* middle(ListNode* head) {
+        ListNode *slow = head, *fast = head->next;
+        while(fast && fast->next) {
+            slow = slow->next;
+            fast = fast->next->next;
+        }
+        return slow;
+    }
+};
+7)
+class Solution {
+public:
+    struct Compare {
+    bool operator()(ListNode* a, ListNode* b) {
+        return a->val > b->val;  
+    }
+};
+
+// Function to merge k sorted linked lists
+ListNode* mergeKLists(vector<ListNode*>& lists) {
+    priority_queue<ListNode*, vector<ListNode*>, Compare> minHeap;
+    for (ListNode* list : lists) {
+        if (list) minHeap.push(list);
+    }
+    ListNode* dummy = new ListNode(0);
+    ListNode* current = dummy;
+
+    while (!minHeap.empty()) {
+        ListNode* smallest = minHeap.top();
+        minHeap.pop();
+        current->next = smallest;
+        current = current->next;
+
+        if (smallest->next) {
+            minHeap.push(smallest->next);
+        }
+    }
+
+    return dummy->next;
+}
+};
+8)
+class Solution {
+public:
+    ListNode* reverseKGroup(ListNode* head, int k) {
+        if (!head || k == 1) return head;
+
+        ListNode* dummy = new ListNode(0);
+        dummy->next = head;
+        ListNode* prev = dummy;
+        ListNode* curr = head;
+
+        int length = getLength(head);
+
+        while (length >= k) {
+            ListNode* tail = curr;
+            ListNode* next = nullptr;
+            ListNode* prevTail = prev;
+
+           
+            for (int i = 0; i < k; ++i) {
+                next = curr->next;
+                curr->next = prev;
+                prev = curr;
+                curr = next;
+            }
+            prevTail->next->next = curr;
+            prevTail->next = prev;
+            prev = tail;
+
+            length -= k;
+        }
+
+        return dummy->next;
+    }
+
+private:
+    int getLength(ListNode* head) {
+        int length = 0;
+        while (head) {
+            length++;
+            head = head->next;
+        }
+        return length;
+    }
+};
+10)
+class DListNode {
+public:
+    int key, value;
+    DListNode* prev;
+    DListNode* next;
+
+    DListNode(int k, int v) : key(k), value(v), prev(nullptr), next(nullptr) {}
+};
+
+class LRUCache {
+private:
+    int capacity;
+    unordered_map<int, DListNode*> cache;  
+    DListNode* head;  
+    DListNode* tail;  
+    
+    void moveToFront(DListNode* node) {
+        removeNode(node);
+        insertAtFront(node);
+    }
+    
+    void removeNode(DListNode* node) {
+        node->prev->next = node->next;
+        if (node->next) {
+            node->next->prev = node->prev;
+        }
+    }
+    
+    void insertAtFront(DListNode* node) {
+        node->next = head->next;
+        node->prev = head;
+        if (head->next) {
+            head->next->prev = node;
+        }
+        head->next = node;
+    }
+    
+    void removeTail() {
+        DListNode* tailNode = tail->prev;
+        removeNode(tailNode);
+        cache.erase(tailNode->key);
+        delete tailNode;
+    }
+
+public:
+    LRUCache(int capacity) : capacity(capacity) {
+        head = new DListNode(0, 0);  
+        tail = new DListNode(0, 0); 
+        head->next = tail;
+        tail->prev = head;
+    }
+    
+    int get(int key) {
+        if (cache.find(key) != cache.end()) {
+            DListNode* node = cache[key];
+            moveToFront(node);
+            return node->value;
+        }
+        return -1;
+    }
+    
+    void put(int key, int value) {
+        if (cache.find(key) != cache.end()) {
+            DListNode* node = cache[key];
+            node->value = value;
+            moveToFront(node);
+        } else {
+            if (cache.size() == capacity) {
+                removeTail();  
+            }
+            DListNode* newNode = new DListNode(key, value);
+            cache[key] = newNode;
+            insertAtFront(newNode);
+        }
+    }
+    
+    ~LRUCache() {
+        DListNode* current = head;
+        while (current) {
+            DListNode* next = current->next;
+            delete current;
+            current = next;
+        }
+    }
+};
