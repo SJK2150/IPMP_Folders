@@ -1,0 +1,169 @@
+1)class Solution {
+public:
+    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
+        ListNode* dummyHead = new ListNode();
+        ListNode* current = dummyHead;
+        int carry = 0;
+
+        while (l1 != nullptr || l2 != nullptr || carry != 0) {
+            int sum = carry;
+
+            if (l1 != nullptr) {
+                sum += l1->val;
+                l1 = l1->next;
+            }
+
+            if (l2 != nullptr) {
+                sum += l2->val;
+                l2 = l2->next;
+            }
+
+            carry = sum / 10;
+            int digit = sum % 10;
+
+            current->next = new ListNode(digit);
+            current = current->next;
+        }
+
+        ListNode* result = dummyHead->next;
+        delete dummyHead;
+        return result;
+    }
+};
+
+2)
+class solution {
+  public:
+  long long MOD = 1000000007;
+    long long multiplyTwoLists(Node *first, Node *second) {
+        long long num1=0;
+        long long num2=0;
+        long long dgtcnt1=0;
+        long long dgtcnt2=0;
+        while(first){
+            num1=(num1*10+(first->data))%MOD;
+            first=first->next;
+        }
+        while(second){
+            num2=(num2*10+(second->data))%MOD;
+            second=second->next;
+        }
+        return (num1*num2)%MOD;
+    }
+};
+3)
+class Solution {
+public:
+    Node* pairWiseSwap(Node* head) {
+        if (head == nullptr || head->next == nullptr) {
+            return head;
+        }
+
+        swap(head->data, head->next->data);
+        head->next->next = pairWiseSwap(head->next->next);
+
+        return head;
+    }
+};
+4)
+class Solution {
+public:
+    Node* swapKthNode(Node* head, int k) {
+        int n = 0;
+        Node* temp = head;
+        while (temp) {
+            temp = temp->next;
+            n++;
+        }
+        if (k > n) return head;
+        if (2 * k - 1 == n) return head;
+
+        Node* first = head;
+        Node* prev1 = nullptr;
+        for (int i = 1; i < k; i++) {
+            prev1 = first;
+            first = first->next;
+        }
+
+        Node* second = head;
+        Node* prev2 = nullptr;
+        for (int i = 1; i < n - k + 1; i++) {
+            prev2 = second;
+            second = second->next;
+        }
+
+        if (prev1) prev1->next = second;
+        if (prev2) prev2->next = first;
+
+        Node* tempNext = first->next;
+        first->next = second->next;
+        second->next = tempNext;
+
+        if (k == 1) head = second;
+        else if (k == n) head = first;
+
+        return head;
+    }
+};
+5)
+
+class Solution {
+public:
+    Node* linkdelete(Node* head, int M, int N) {
+        if (!head || M <= 0) return head;
+        
+        Node* current = head;
+        
+        while (current) {
+
+            for (int i = 1; i < M && current; i++) {
+                current = current->next;
+            }
+            
+            if (!current) break;
+            Node* lastM = current;
+            
+            // Skip N nodes
+            for (int i = 0; i <= N && current; i++) {
+                current = current->next;
+            }
+            lastM->next = current;
+        }
+        
+        return head;
+    }
+};
+
+7)
+class Solution {
+public:
+    Node* merge(Node* a, Node* b) {
+        if (a == nullptr) return b;
+        if (b == nullptr) return a;
+        
+        Node* result;
+        if (a->data < b->data) {
+            result = a;
+            result->bottom = merge(a->bottom, b);
+        } else {
+            result = b;
+            result->bottom = merge(a, b->bottom);
+        }
+        
+        result->next = nullptr;
+        return result;
+    }
+    
+    Node* flatten(Node* root) {
+        if (root == nullptr || root->next == nullptr) {
+            return root;
+        }
+        
+        root->next = flatten(root->next);
+        root = merge(root, root->next);
+        
+        return root;
+    }
+};
+
+8)
